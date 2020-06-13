@@ -1,0 +1,181 @@
+body {
+  background-color: hsl(0, 0%, 98%);
+  box-sizing: border-box;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: hsl(0, 0%, 30%);
+}
+
+.box-element {
+  box-shadow: hsl(0, 0%, 80%) 0 0 16px;
+  background-color: #fff;
+  border-radius: 4px;
+  padding: 10px;
+}
+
+.thumbnail {
+  width: 100%;
+  height: 200px;
+  -webkit-box-shadow: -1px -3px 5px -2px rgba(214, 214, 214, 1);
+  -moz-box-shadow: -1px -3px 5px -2px rgba(214, 214, 214, 1);
+  box-shadow: -1px -3px 5px -2px rgba(214, 214, 214, 1);
+}
+
+.product {
+  border-radius: 0 0 5px 5px;
+}
+
+.bg-dark {
+  background-color: #3797a4 !important;
+}
+
+#cart-icon {
+  width: 25px;
+  display: inline-block;
+  margin-left: 15px;
+}
+
+#cart-total {
+  display: block;
+  text-align: center;
+  color: #fff;
+  background-color: #e71414;
+  width: 20px;
+  height: 25px;
+  border-radius: 50%;
+  font-size: 14px;
+}
+
+.col-lg-4,
+.col-lg-6,
+.col-lg-8,
+.col-lg-12 {
+  margin-top: 10px;
+}
+
+.btn {
+  border-radius: 0%;
+}
+
+.row-image {
+  width: 100px;
+}
+
+.form-field {
+  width: 250px;
+  display: inline-block;
+  padding: 5px;
+}
+
+.cart-row {
+  display: flex;
+  padding-bottom: 10px;
+  margin-bottom: 10px;
+  border-bottom: 1px solid #ececec;
+}
+
+.quantity {
+  display: inline-block;
+  font-weight: 700;
+  padding-right: 10px;
+}
+
+.chg-quantity {
+  width: 12px;
+  cursor: pointer;
+  display: block;
+  margin-top: 5px;
+  transition: 0.1s;
+}
+
+.chg-quantity:hover {
+  opacity: 0.6;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.price-tag {
+  margin-top: 10px;
+  float: right;
+}
+
+.cart-checkout {
+  float: right;
+  margin: 5px;
+}
+
+.continue-shopping {
+  margin-bottom: 50px;
+}
+
+.item {
+  font-weight: 500;
+  font-size: 1.3rem;
+  font-family: "Open Sans", sans-serif;
+  text-align: center;
+}
+
+.item-number {
+  font-style: normal;
+  font-weight: 600;
+}
+
+.price-number {
+  font-style: normal;
+  font-weight: 600;
+}
+
+.summary-info {
+  padding-bottom: 10px;
+}
+
+.box-1 {
+  margin-bottom: 20px;
+}
+
+.table-header {
+  font-weight: 600;
+  font-size: 1rem;
+  font-family: "Open Sans", sans-serif;
+}
+
+.table-content {
+  font-weight: 400;
+  font-size: 1rem;
+  font-family: "Open Sans", sans-serif;
+}
+
+.quantity-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.quantity-container p,
+.quantity-container span {
+  margin-bottom: 0;
+}
+
+.shpping-info {
+  padding-left: 10px;
+  font-weight: 500;
+  font-size: 1.2rem;
+  font-family: "Open Sans", sans-serif;
+}
+
+.summary-container {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  place-items: center;
+  padding-bottom: 10px;
+  margin-bottom: 10px;
+  border-bottom: 1px solid #ececec;
+}
