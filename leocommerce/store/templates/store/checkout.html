@@ -110,4 +110,12 @@
   </div>
 </div>
 
+<script>
+  var shipping = "{{order_of_this_transaction.shipping}}";
+
+  if (shipping == "False") {
+    document.getElementById("shipping-info").innerHTML = "";
+  }
+</script>
+
 {% endblock content %}

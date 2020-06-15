@@ -51,14 +51,18 @@
     <div class="col-lg-2 table-content quantity-container">
       <div class="quantity">
         <img
+          data-product="{{item.product.id}}"
+          data-action="add"
           src="{% static 'images/up-arrow.png' %}"
           alt=""
-          class="chg-quantity"
+          class="chg-quantity update-cart"
         />
         <img
+          data-product="{{item.product.id}}"
+          data-action="remove"
           src="{% static 'images/down-arrow.png' %}"
           alt=""
-          class="chg-quantity"
+          class="chg-quantity update-cart"
         />
       </div>
       <p class="quantity">
@@ -66,7 +70,7 @@
       </p>
     </div>
     <div class="col-lg-2 table-content">
-      <span>SEK {{ item.get_total }}</span>
+      <span>SEK {{ item.get_total|floatformat:2 }}</span>
     </div>
   </div>
   {% endfor %}
