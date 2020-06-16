@@ -3,7 +3,7 @@
 <div class="row">
   <div class="col-lg-6">
     <div class="box-element" id="form-wrapper">
-      <form action="" id="form">
+      <form accept-charset="UTF-8" action="" id="form">
         <div id="user-info">
           <div class="form-field">
             <input
@@ -62,10 +62,12 @@
           </div>
           <div class="form-field">
             <input
+              readonly
               type="text"
               class="form-control"
               name="country"
-              placeholder="Country..."
+              value="Sweden"
+              placeholder="Sweden"
             />
           </div>
         </div>
@@ -81,7 +83,16 @@
 
     <br />
     <div class="box-element hidden" id="payment-info">
-      <small>Paypal Options</small>
+      <div class="row justify-content-around align-items-center">
+        <div class="col-4">
+          Paypal Options
+        </div>
+        <div class="col-4">
+          <button class="btn btn-primary btn-sm" id="make-payment">
+            Make Payment
+          </button>
+        </div>
+      </div>
     </div>
   </div>
   <div class="col-lg-6">
@@ -104,18 +115,93 @@
       {% endfor %}
       <h5>Items: {{order_of_this_transaction.get_cart_items_quantity}} st</h5>
       <h5>
-        Total {{order_of_this_transaction.get_cart_total|floatformat:2}} kr
+        Total: {{order_of_this_transaction.get_cart_total|floatformat:2}} kr
       </h5>
+      <h4 id="shipping-fee-included-total">
+        Total including shipping fee:
+        {{order_of_this_transaction.get_cart_total_including_shipping|floatformat:2}}
+        kr
+      </h4>
     </div>
   </div>
 </div>
 
 <script>
   var shipping = "{{order_of_this_transaction.shipping}}";
+  var totalAmount =
+    "{{order_of_this_transaction.get_cart_total|floatformat:2}}";
 
   if (shipping == "False") {
     document.getElementById("shipping-info").innerHTML = "";
+    document.getElementById("shipping-fee-included-total").innerHTML = "";
+  } else {
+    totalAmount =
+      "{{order_of_this_transaction.get_cart_total_including_shipping|floatformat:2}}";
   }
+
+  if (user != "AnonymousUser") {
+    document.getElementById("user-info").innerHTML = "";
+  }
+
+  if (shipping == "False" && user != "AnonymousUser") {
+    document.getElementById("form-wrapper").classList.add("hidden");
+    document.getElementById("payment-info").classList.remove("hidden");
+  }
+
+  var form = document.getElementById("form");
+
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    console.log("form submitted...");
+    document.getElementById("form-button").classList.add("hidden");
+    document.getElementById("payment-info").classList.remove("hidden");
+  });
+
+  document
+    .getElementById("make-payment")
+    .addEventListener("click", function () {
+      var userFormData = {
+        name: null,
+        email: null,
+        totalAmount: totalAmount,
+      };
+
+      var shippingInfo = {
+        address: null,
+        city: null,
+        state: null,
+        zipcode: null,
+      };
+
+      if (shipping != "False") {
+        shippingInfo.address = form.address.value;
+        shippingInfo.city = form.city.value;
+        shippingInfo.state = form.state.value;
+        shippingInfo.zipcode = form.zipcode.value;
+      }
+
+      if (user == "AnonymousUser") {
+        userFormData.name = form.name.value;
+        userFormData.email = form.email.value;
+      }
+
+      var url = "/process_order/";
+
+      fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRFToken": csrftoken,
+        },
+        body: JSON.stringify({ form: userFormData, shipping: shippingInfo }),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          console.log("Success:", data);
+          alert("Transaction completed");
+          window.location.href = "{% url 'store' %}";
+        });
+    });
 </script>
 
 {% endblock content %}

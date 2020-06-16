@@ -48,6 +48,12 @@ class Order(models.Model):
         return total
 
     @property
+    def get_cart_total_including_shipping(self):
+        orderitems = self.orderitem_set.all()
+        total = sum([item.get_total for item in orderitems])
+        return (total + 60)
+
+    @property
     def get_cart_items_quantity(self):
         orderitems = self.orderitem_set.all()
         total = sum([item.quantity for item in orderitems])
