@@ -15,7 +15,7 @@ class Customer(models.Model):
 
 class Product(models.Model):
     name = models.CharField(max_length=200, null=True)
-    price = models.FloatField()
+    price = models.DecimalField(max_digits=7, decimal_places=2)
     digital = models.BooleanField(default=False, null=True, blank=False)
     image = models.ImageField(null=True, blank=True)
 
@@ -51,7 +51,16 @@ class Order(models.Model):
     def get_cart_total_including_shipping(self):
         orderitems = self.orderitem_set.all()
         total = sum([item.get_total for item in orderitems])
-        return (total + 60)
+        shipping = False
+        for i in orderitems:
+            if i.product.digital == False:
+                shipping = True
+        if total >= 500:
+            return total
+        elif shipping:
+            return (total + 60)
+        else:
+            return total
 
     @property
     def get_cart_items_quantity(self):
