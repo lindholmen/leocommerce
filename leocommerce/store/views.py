@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from .models import *
-from .utils import cookie_cart, cart_data
+from .utils import cookie_cart, cart_data, guest_order
 
 from django.http import JsonResponse
 # Create your views here.
@@ -85,35 +85,36 @@ def processOrder(request):
         customer = request.user.customer
         order, created = Order.objects.get_or_create(
             customer=customer, complete=False)
-        total = float(data["form"]["totalAmount"])
-        order.transaction_id = transaction_id
-        print("transaction id:", transaction_id)
-
-        if order.shipping == True:
-            # which means it requires shipping
-            if total == float("{:.2f}".format(order.get_cart_total_including_shipping)):
-                order.complete = True
-                print("require shipping, complete set to true")
-        else:
-            # which means it does not require shipping
-            if total == float("{:.2f}".format(order.get_cart_total)):
-                order.complete = True
-                print("not require shipping, complete set to true")
-
-        order.save()
-
-        if order.shipping == True:
-            print("started to create shipping address")
-            ShippingAddress.objects.create(
-                customer=customer,
-                order=order,
-                address=data['shipping']['address'],
-                city=data['shipping']['city'],
-                state=data['shipping']['state'],
-                zipcode=data['shipping']['zipcode']
-            )
 
     else:
-        print("user not logged in")
+        customer, order = guest_order(request, data)
+
+    total = float(data["form"]["totalAmount"])
+    order.transaction_id = transaction_id
+    print("transaction id:", transaction_id)
+
+    if order.shipping == True:
+        # which means it requires shipping
+        if total == float("{:.2f}".format(order.get_cart_total_including_shipping)):
+            order.complete = True
+            print("require shipping, complete set to true")
+    else:
+        # which means it does not require shipping
+        if total == float("{:.2f}".format(order.get_cart_total)):
+            order.complete = True
+            print("not require shipping, complete set to true")
+
+    order.save()
+
+    if order.shipping == True:
+        print("started to create shipping address")
+        ShippingAddress.objects.create(
+            customer=customer,
+            order=order,
+            address=data['shipping']['address'],
+            city=data['shipping']['city'],
+            state=data['shipping']['state'],
+            zipcode=data['shipping']['zipcode']
+        )
 
     return JsonResponse("Payment complete!", safe=False)

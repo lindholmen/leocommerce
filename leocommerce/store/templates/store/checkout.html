@@ -6,22 +6,10 @@
       <form accept-charset="UTF-8" action="" id="form">
         <div id="user-info">
           <div class="form-field">
-            <input
-              required
-              type="text"
-              class="form-control"
-              name="name"
-              placeholder="Name..."
-            />
+            <input required type="text" class="form-control" name="name" placeholder="Name..." />
           </div>
           <div class="form-field">
-            <input
-              required
-              type="email"
-              class="form-control"
-              name="email"
-              placeholder="Email..."
-            />
+            <input required type="email" class="form-control" name="email" placeholder="Email..." />
           </div>
         </div>
         <div id="shipping-info">
@@ -29,55 +17,23 @@
           <p class="shpping-info">Shipping Information</p>
           <hr />
           <div class="form-field">
-            <input
-              type="text"
-              class="form-control"
-              name="address"
-              placeholder="Address..."
-            />
+            <input type="text" class="form-control" name="address" placeholder="Address..." />
           </div>
           <div class="form-field">
-            <input
-              type="text"
-              class="form-control"
-              name="city"
-              placeholder="City..."
-            />
+            <input type="text" class="form-control" name="city" placeholder="City..." />
           </div>
           <div class="form-field">
-            <input
-              type="text"
-              class="form-control"
-              name="state"
-              placeholder="State..."
-            />
+            <input type="text" class="form-control" name="state" placeholder="State..." />
           </div>
           <div class="form-field">
-            <input
-              type="text"
-              class="form-control"
-              name="zipcode"
-              placeholder="Zip code..."
-            />
+            <input type="text" class="form-control" name="zipcode" placeholder="Zip code..." />
           </div>
           <div class="form-field">
-            <input
-              readonly
-              type="text"
-              class="form-control"
-              name="country"
-              value="Sweden"
-              placeholder="Sweden"
-            />
+            <input readonly type="text" class="form-control" name="country" value="Sweden" placeholder="Sweden" />
           </div>
         </div>
         <hr />
-        <input
-          type="submit"
-          id="form-button"
-          class="btn btn-success btn-block"
-          value="Continue"
-        />
+        <input type="submit" id="form-button" class="btn btn-success btn-block" value="Continue" />
       </form>
     </div>
 
@@ -87,19 +43,18 @@
         <div class="col-4">
           Paypal Options
         </div>
-        <div class="col-4">
+        <!-- <div class="col-4">
           <button class="btn btn-primary btn-sm" id="make-payment">
             Make Payment
           </button>
-        </div>
+        </div> -->
       </div>
+      <div id="paypal-button-container"></div>
     </div>
   </div>
   <div class="col-lg-6">
     <div class="box-element">
-      <a href="{% url 'cart' %}" class="btn btn-outline-dark"
-        >&#x2190; Back to Cart</a
-      >
+      <a href="{% url 'cart' %}" class="btn btn-outline-dark">&#x2190; Back to Cart</a>
       <hr />
       <h3>Order Summary</h3>
       <hr />
@@ -108,9 +63,15 @@
         <div>
           <img src="{{item.product.imageURL}}" alt="" class="row-image" />
         </div>
-        <div><p>{{item.product.name}}</p></div>
-        <div><p>{{item.product.price|floatformat:2}} kr/st</p></div>
-        <div><p>{{item.quantity}}</p></div>
+        <div>
+          <p>{{item.product.name}}</p>
+        </div>
+        <div>
+          <p>{{item.product.price|floatformat:2}} kr/st</p>
+        </div>
+        <div>
+          <p>{{item.quantity}}</p>
+        </div>
       </div>
       {% endfor %}
       <h5>Items: {{order_of_this_transaction.get_cart_items_quantity}} st</h5>
@@ -125,6 +86,45 @@
     </div>
   </div>
 </div>
+
+
+<script
+  src="https://www.paypal.com/sdk/js?client-id=Ac6DUecw5zVrzmJAlFEPQyW6FKKmCrVF2dMRAqEL9JpBrLmc8qw93UKNaOwbn4i7UuCCNz35C5jKWgcp&currency=SEK"></script>
+<script>
+  var shipping = '{{order_of_this_transaction.shipping}}'
+  var totalAmount = "{{order_of_this_transaction.get_cart_total|floatformat:2}}"
+  if (shipping == "True") {
+    totalAmount = "{{order_of_this_transaction.get_cart_total_including_shipping|floatformat:2}}"
+  }
+
+  // Render the PayPal button into #paypal-button-container
+  paypal.Buttons({
+    style: {
+      color: 'blue',
+      shape: 'rect'
+    },
+
+    // Set up the transaction
+    createOrder: function (data, actions) {
+      return actions.order.create({
+        purchase_units: [{
+          amount: {
+            value: parseFloat(totalAmount).toFixed(2)
+          }
+        }]
+      });
+    },
+
+    // Finalize the transaction
+    onApprove: function (data, actions) {
+      return actions.order.capture().then(function (details) {
+        submitFormData();
+      });
+    }
+
+
+  }).render('#paypal-button-container');
+</script>
 
 <script>
   var shipping = "{{order_of_this_transaction.shipping}}";
@@ -157,51 +157,56 @@
     document.getElementById("payment-info").classList.remove("hidden");
   });
 
-  document
-    .getElementById("make-payment")
-    .addEventListener("click", function () {
-      var userFormData = {
-        name: null,
-        email: null,
-        totalAmount: totalAmount,
-      };
+  // document.getElementById("make-payment").addEventListener("click", function () {
+  //     submitFormData();
+  //   });
+  function submitFormData() {
+    var userFormData = {
+      name: null,
+      email: null,
+      totalAmount: totalAmount,
+    };
 
-      var shippingInfo = {
-        address: null,
-        city: null,
-        state: null,
-        zipcode: null,
-      };
+    var shippingInfo = {
+      address: null,
+      city: null,
+      state: null,
+      zipcode: null,
+    };
 
-      if (shipping != "False") {
-        shippingInfo.address = form.address.value;
-        shippingInfo.city = form.city.value;
-        shippingInfo.state = form.state.value;
-        shippingInfo.zipcode = form.zipcode.value;
-      }
+    if (shipping != "False") {
+      shippingInfo.address = form.address.value;
+      shippingInfo.city = form.city.value;
+      shippingInfo.state = form.state.value;
+      shippingInfo.zipcode = form.zipcode.value;
+    }
 
-      if (user == "AnonymousUser") {
-        userFormData.name = form.name.value;
-        userFormData.email = form.email.value;
-      }
+    if (user == "AnonymousUser") {
+      userFormData.name = form.name.value;
+      userFormData.email = form.email.value;
+    }
 
-      var url = "/process_order/";
+    var url = "/process_order/";
 
-      fetch(url, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "X-CSRFToken": csrftoken,
-        },
-        body: JSON.stringify({ form: userFormData, shipping: shippingInfo }),
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          console.log("Success:", data);
-          alert("Transaction completed");
-          window.location.href = "{% url 'store' %}";
-        });
-    });
+    fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRFToken": csrftoken,
+      },
+      body: JSON.stringify({ form: userFormData, shipping: shippingInfo }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log("Success:", data);
+        alert("Transaction completed");
+
+        cart = {}
+        document.cookie = 'cart=' + JSON.stringify(cart) + ";domain=;path=/"
+
+        window.location.href = "{% url 'store' %}";
+      });
+  }
 </script>
 
 {% endblock content %}
