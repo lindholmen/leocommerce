@@ -8,6 +8,10 @@ verify_ssl = true
 [packages]
 django = "==3.0.7"
 pillow = "*"
+gunicorn = "*"
+dj-database-url = "*"
+whitenoise = "*"
+psycopg2 = "*"
 
 [requires]
 python_version = "3.7"
