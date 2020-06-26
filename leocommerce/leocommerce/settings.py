@@ -26,7 +26,7 @@ SECRET_KEY = '4ygk2!ojijs3xs7!wj*cew0cvhz7-eiax+$fv6_8ic6s*%36vl'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['0.0.0.0', 'leocommerceapp.herokuapp.com', '127.0.0.1']
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
