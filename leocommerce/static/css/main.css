@@ -179,3 +179,27 @@ h6 {
   margin-bottom: 10px;
   border-bottom: 1px solid #ececec;
 }
+
+.parent-container {
+  position: relative;
+  min-height: 100vh;
+}
+
+.container {
+  padding-bottom: 3.5rem;
+}
+
+#footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 3.5rem;
+  
+}
+
+.footer-text{
+  text-align: center;
+  color:white;
+  margin-bottom: 0;
+  padding-top: 5px;
+}
